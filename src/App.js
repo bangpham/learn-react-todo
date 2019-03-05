@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import './App.css'
 import TodoList from './TodoList'
+import TodoItems from './TodoItems'
 
 class App extends Component {
     inputElement = React.createRef()
@@ -11,6 +12,7 @@ class App extends Component {
             currentItem: {text:'', key:''},
         }
     }
+
     handleInput = e => {
         const itemText = e.target.value
         const currentItem = { text: itemText, key: Date.now() }
@@ -18,16 +20,28 @@ class App extends Component {
           currentItem,
         })
     }
-    addItem = () => {
-        console.log('Hello Add Item')
+
+    addItem = e => {
+        e.preventDefault()
+        const newItem = this.state.currentItem
+        if (newItem.text !== '') {
+            console.log(newItem)
+            //spread syntax to spread existing array, and push newItem element in the end of that new arr object
+            const items = [...this.state.items, newItem]
+            this.setState({
+                items: items,
+                currentItem: { text: '', key: '' },
+            })
+        }
     }
 
-    inputElement = () => {
-        console.log('Hello Add Item')
-    }
-
-    handleInput = () => {
-        console.log('Hello Add Item')
+    deleteItem = key => {
+        const filteredItems = this.state.items.filter(item => {
+            return item.key !== key
+        })
+        this.setState({
+            items: filteredItems,
+        })
     }
 
     render() {
@@ -39,6 +53,7 @@ class App extends Component {
                 handleInput={this.handleInput}
                 currentItem={this.state.currentItem}
               />
+              <TodoItems entries={this.state.items} deleteItem={this.deleteItem} />
           </div>
         )
     }
